@@ -1,0 +1,39 @@
+version: "3.9"
+
+x-app: &build
+  build: .
+  restart: always
+
+x-env: &env
+  env_file:
+    - .env
+
+services:
+  back:
+    <<: [*build, *env]
+    container_name: tg_bot
+    expose:
+      - 8000
+    depends_on:
+      - mongodb
+
+  mongodb:
+    <<: *env
+    container_name: tgbot_mongo
+    image: mongo:7-jammy
+    restart: unless-stopped
+    expose:
+      - 27017
+    volumes:
+      - tg_bot_mongo:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
+    command:
+      mongod --quiet --logpath /dev/null &&
+      mongorestore -d /data/sampleDB
+
+volumes:
+  tg_bot_mongo:
+#      MONGO_INITDB_DATABASE: ${MONGO_DB}
+  #      mongorestore -u ${MONGO_USER} --authenticationDatabase admin -d db_name -c collection_name /path/file.bson
