@@ -28,7 +28,7 @@ async def avg_by_date(message: Message):
         res = await ss.avg_by_date(message_data)
         await message.answer(json.dumps(res))
     except ValidationError:
-        await message.answer('Невалидный запос. Пример запроса: {"dt_from": "2022-09-01T00:00:00",\
+        await message.answer('Невалидный запрос. Пример запроса: {"dt_from": "2022-09-01T00:00:00",\
          "dt_upto": "2022-12-31T23:59:00", "group_type": "month"}')
     except Exception as e:
         log.error(e)
