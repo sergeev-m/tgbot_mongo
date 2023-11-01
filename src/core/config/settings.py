@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     TITLE: str = 'Tg_bot_mongo'
     VERSION: str = '0.1'
     DESCRIPTION: str = 'tg bot on mongodb'
+    MAX_LENGTH_MESSAGE: int = 4096
 
     # Log
     LOG_FILENAME: str = 'tg_bot.log'
