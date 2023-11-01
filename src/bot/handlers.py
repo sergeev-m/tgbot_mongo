@@ -1,9 +1,13 @@
 from aiogram import Router
 from aiogram.filters.command import Command
 from aiogram.types import Message
+from pydantic import ValidationError
 
 from src.salaries.service import salary_service as ss
 from src.salaries.schemas import RequestData
+from src.core.log import log
+
+
 router = Router()
 
 
@@ -17,9 +21,12 @@ async def cmd_start(message: Message):
 
 @router.message()
 async def avg_by_date(message: Message):
-    message_data = RequestData.parse_raw(message.text)
     try:
+        message_data = RequestData.parse_raw(message.text)
         res = await ss.avg_by_date(message_data)
         await message.answer(str(res))
+    except ValidationError:
+        await message.answer('Невалидный запос. Пример запроса: {"dt_from": "2022-09-01T00:00:00",\
+         "dt_upto": "2022-12-31T23:59:00", "group_type": "month"}')
     except Exception as e:
-        await message.answer("Ошибка валидации данных", str(e))
+        log.error(e)

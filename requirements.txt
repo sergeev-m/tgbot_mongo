@@ -2,9 +2,5 @@ pydantic==2.4.2
 pydantic-settings==2.0.3
 pytest==7.4.3
 pytest-asyncio==0.21.1
-pymongo
 aiogram
 motor
-uvicorn
-fastapi
-ipython

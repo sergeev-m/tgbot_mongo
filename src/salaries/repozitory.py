@@ -1,11 +1,5 @@
-import os
-import bson
-import pathlib
-
-
 from datetime import timedelta
-from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorCursor
-from bson import ObjectId
+from motor.motor_asyncio import AsyncIOMotorCollection
 
 from src.core.db.db import db
 from src.core.config.db import settings_db
@@ -14,24 +8,6 @@ from src.core.config.db import settings_db
 class SalaryRepozitory:
     def __init__(self, collection: AsyncIOMotorCollection):
         self.collection = collection
-
-    async def get_all(self):
-        smtp: AsyncIOMotorCursor = self.collection.find(None)
-        return await smtp.to_list(100)
-
-    async def retrieve(self, pk: str):
-        return await self.collection.find_one({'_id': ObjectId(pk)})
-
-    async def create(self, data):
-        self.collection.insert_one({})
-
-    async def load_data(self):
-        path = '/app/data/sampleDB/'
-        for coll in os.listdir(path):
-            if coll.endswith('.bson'):
-                with open(os.path.join(path, coll), 'rb+') as f:
-                    await self.collection.insert_many(bson.decode_all(f.read()))
-        return await self.get_all()
 
     async def avg_by_date(self, data: dict):
         group_type = data['group_type'].name
@@ -96,11 +72,3 @@ class SalaryRepozitory:
 
 
 salaries_repozitory = SalaryRepozitory(db.get_collection(settings_db.MONGO_COLLECTION))
-
-
-async def get_all_data(self):
-    cursor = self.collection.find({})
-    result = []
-    async for document in cursor:
-        result.append(document)
-    return result

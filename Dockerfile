@@ -24,6 +24,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-#CMD ["sh", "-c", "uvicorn src.main:app --reload --host 0.0.0.0 --port 8000 --log-level ${APP_LOGLEVEL:-info} --use-colors"]
 CMD ["python", "main.py"]
-#CMD ["sh", "-c", "uvicorn src.main --reload"]
