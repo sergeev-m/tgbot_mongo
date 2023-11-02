@@ -5,31 +5,33 @@ from src.bot.handlers import router
 from src.core.log import log
 
 
-def setup_handlers(dp: Dispatcher) -> None:
-    dp.include_router(router)
+class BotApp:
+    def __init__(self):
+        self.bot = Bot(token=settings.BOT_TOKEN)
+        self.dp = Dispatcher()
+
+    async def __call__(self, *args, **kwargs):
+        self.dp.startup.register(self.__aiogram_on_startup_polling)
+        self.dp.shutdown.register(self.__aiogram_on_shutdown_polling)
+        await self.dp.start_polling(self.bot)
+
+    def __setup_handlers(self) -> None:
+        self.dp.include_router(router)
+
+    async def __setup_aiogram(self) -> None:
+        self.__setup_handlers()
+        log.info("Configured aiogram")
+
+    async def __aiogram_on_startup_polling(self) -> None:
+        await self.bot.delete_webhook(drop_pending_updates=True)
+        await self.__setup_aiogram()
+        log.info("Started polling")
+
+    async def __aiogram_on_shutdown_polling(self) -> None:
+        log.debug("Stopping polling")
+        await self.bot.session.close()
+        await self.dp.storage.close()
+        log.info("Stopped polling")
 
 
-async def setup_aiogram(dp: Dispatcher) -> None:
-    setup_handlers(dp)
-    log.info("Configured aiogram")
-
-
-async def aiogram_on_startup_polling(dispatcher: Dispatcher, bot: Bot) -> None:
-    await bot.delete_webhook(drop_pending_updates=True)
-    await setup_aiogram(dispatcher)
-    log.info("Started polling")
-
-
-async def aiogram_on_shutdown_polling(dispatcher: Dispatcher, bot: Bot) -> None:
-    log.debug("Stopping polling")
-    await bot.session.close()
-    await dispatcher.storage.close()
-    log.info("Stopped polling")
-
-
-async def start_app():
-    bot = Bot(token=settings.BOT_TOKEN)
-    dp = Dispatcher()
-    dp.startup.register(aiogram_on_startup_polling)
-    dp.shutdown.register(aiogram_on_shutdown_polling)
-    await dp.start_polling(bot)
+bot_app = BotApp()

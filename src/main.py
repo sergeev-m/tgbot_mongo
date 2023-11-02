@@ -1,13 +1,13 @@
 import asyncio
 
-from src.bot.bot import start_app
+from src.bot.bot import bot_app
 from src.core.log import log
 
 
 async def main():
     try:
+        await bot_app()
         log.info('Started app')
-        await start_app()
     except Exception as e:
         log.error(e)
 
