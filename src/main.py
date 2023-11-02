@@ -7,7 +7,7 @@ from src.core.log import log
 async def main():
     try:
         log.info('Started app')
-        return await start_app()
+        await start_app()
     except Exception as e:
         log.error(e)
 
