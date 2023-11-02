@@ -1,5 +1,3 @@
-import asyncio
-
 from aiogram import Bot, Dispatcher
 
 from src.core.config.settings import settings
@@ -35,3 +33,4 @@ async def start_app():
     dp.startup.register(aiogram_on_startup_polling)
     dp.shutdown.register(aiogram_on_shutdown_polling)
     await dp.start_polling(bot)
+    return dp

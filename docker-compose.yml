@@ -12,8 +12,6 @@ services:
   back:
     <<: [*build, *env]
     container_name: tg_bot
-    expose:
-      - 8000
     depends_on:
       - mongodb
 
@@ -30,10 +28,8 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
     command:
-      mongod --quiet --logpath /dev/null &&
-      mongorestore -d /data/sampleDB
+      mongod --quiet --logpath /dev/null
+#      mongorestore -d /data/sampleDB  # restore from file
 
 volumes:
   tg_bot_mongo:
-#      MONGO_INITDB_DATABASE: ${MONGO_DB}
-  #      mongorestore -u ${MONGO_USER} --authenticationDatabase admin -d db_name -c collection_name /path/file.bson
